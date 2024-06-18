@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <string.h>
+
+struct Account {
+    char username[50];
+    char password[50];
+    double balance;
+};
+
+// Fungsi untuk login
+int login(struct Account accounts[], int numAccounts) {
+    char username[50], password[50];
+    int usernameFound = 0; 
+
+    printf("Masukkan username: ");
+    scanf("%s", username);
+    printf("Masukkan password: ");
+    scanf("%s", password);
+
+    for (int i = 0; i < numAccounts; i++) {
+        if (strcmp(accounts[i].username, username) == 0) {
+            usernameFound = 1; 
+            if (strcmp(accounts[i].password, password) == 0) {
+                printf("Login berhasil. Selamat datang, %s!\n\n", username); 
+                printf("===SELAMAT DATANG DI BANK ZKA 0017===\n");
+                printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+                return i;
+            } else {
+                printf("Password salah.\n"); 
+                return -1;
+            }
+        }
+    }
+
+    if (!usernameFound) {
+        printf("Username salah.\n"); 
+    }
+    return -1;  
+}
+
+
+
+
+// Fungsi untuk cek saldo
+void checkBalance(struct Account account) {
+    printf("Saldo anda: %.2f\n", account.balance);
+}
+
+// Fungsi untuk transfer
+void transfer(struct Account *account, struct Account accounts[], int numAccounts) {
+    char targetUsername[50];
+    double amount;
+
+    printf("Masukkan username tujuan: ");
+    scanf("%s", targetUsername);
+    printf("Masukkan jumlah yang akan ditransfer: ");
+    scanf("%lf", &amount);
+
+    if (amount > account->balance) {
+        printf("Saldo tidak cukup.\n");
+        return;
+    }
+
+    for (int i = 0; i < numAccounts; i++) {
+        if (strcmp(accounts[i].username, targetUsername) == 0) {
+            account->balance -= amount;
+            accounts[i].balance += amount;
+            printf("Transfer berhasil.\n");
+            return;
+        }
+    }
+
+    printf("Username tujuan tidak ditemukan.\n");
+}
+
+// Fungsi untuk ambil uang
+void withdraw(struct Account *account) {
+    double amount;
+    printf("Masukkan jumlah yang akan diambil (kelipatan 50.000 atau 100.000): ");
+    scanf("%lf", &amount);
+
+    if ((int)amount % 50000 != 0 && (int)amount % 100000 != 0) {
+        printf("Jumlah tidak valid. Hanya bisa mengambil kelipatan 50.000 atau 100.000.\n");
+        return;
+    }
+
+    if (amount > account->balance) {
+        printf("Saldo tidak cukup.\n");
+        return;
+    }
+
+    account->balance -= amount;
+    printf("Penarikan berhasil. Saldo anda sekarang: %.2f\n", account->balance);
+}
+
+int main() {
+    struct Account accounts[4] = {
+        {"user1", "pass1", 100000},
+        {"user2", "pass2", 150000},
+        {"user3", "pass3", 200000},
+        {"zika", "zika123", 5000000}  // akun yang dipakai
+    };
+
+    int numAccounts = 4;
+    int loggedInUserIndex = -1;
+
+    while (loggedInUserIndex == -1) {
+        loggedInUserIndex = login(accounts, numAccounts);
+        if (loggedInUserIndex == -1) {
+            printf("Login gagal. Coba lagi.\n");
+        }
+    }
+
+    int choice;
+    do {
+        printf("\n1. Cek Saldo\n2. Transfer\n3. Ambil Uang\n4. Keluar\n");
+        printf("Masukkan pilihan: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                checkBalance(accounts[loggedInUserIndex]);
+                break;
+            case 2:
+                transfer(&accounts[loggedInUserIndex], accounts, numAccounts);
+                break;
+            case 3:
+                withdraw(&accounts[loggedInUserIndex]);
+                break;
+            case 4:
+                printf("Keluar dari program.\n\n");
+                printf("====Terima kasih sudah berlayanan,sampai jumpa lagi====\n");
+                break;
+            default:
+                printf("Pilihan tidak valid.\n");
+        }
+    } while (choice != 4);
+
+    return 0;
+}
