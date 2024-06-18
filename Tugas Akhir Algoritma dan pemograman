@@ -7,7 +7,10 @@ struct Account {
     double balance;
 };
 
-// Fungsi untuk login
+//Nama : Zikra Mufti
+//NIM  : 12250514684
+
+
 int login(struct Account accounts[], int numAccounts) {
     char username[50], password[50];
     int usernameFound = 0; 
